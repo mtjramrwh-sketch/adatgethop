@@ -4,18 +4,24 @@ import fs from "fs";
 import multer from "multer";
 import AdmZip from "adm-zip";
 import crypto from "crypto";
+import os from "os";
 import { createServer as createViteServer } from "vite";
 
-// Ensure upload directory exists
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// Ensure upload directory exists - using system temp folder for robust compatibility with serverless environments (like Vercel)
+const UPLOAD_DIR = path.join(os.tmpdir(), "zip-to-github-uploads");
+try {
+  if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn("Failed to create UPLOAD_DIR locally, falling back to os.tmpdir:", e);
 }
 
 // Set up multer disk storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
+    const dest = fs.existsSync(UPLOAD_DIR) ? UPLOAD_DIR : os.tmpdir();
+    cb(null, dest);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -80,9 +86,12 @@ async function startServer() {
       return res.end();
     }
 
-    const zipPath = path.join(UPLOAD_DIR, fileId as string);
+    const zipPath = fs.existsSync(path.join(UPLOAD_DIR, fileId as string))
+      ? path.join(UPLOAD_DIR, fileId as string)
+      : path.join(os.tmpdir(), fileId as string);
+
     if (!fs.existsSync(zipPath)) {
-      sendLog("error", "Uploaded file not found on server. Please try uploading again.");
+      sendLog("error", `Uploaded file not found on server (${fileId}). Please try uploading again.`);
       return res.end();
     }
 
