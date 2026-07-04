@@ -1,0 +1,18 @@
+{
+  "name": "متجر أم روح - بوابة المزامنة والنشر",
+  "short_name": "بوابة النشر",
+  "description": "أتمتة المزامنة الذكية لحماية عرض التطبيقات المثبتة دون شريط المتصفح لمتجر أم روح",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090a0f",
+  "theme_color": "#090a0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

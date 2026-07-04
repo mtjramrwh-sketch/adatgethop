@@ -1,0 +1,6 @@
+{
+  "name": "Um Rooh Store",
+  "description": "A high-performance ZIP-to-GitHub automated continuous deployment utility that unpacks update packages and pushes delta changes recursively to trigger Vercel rebuilds.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
